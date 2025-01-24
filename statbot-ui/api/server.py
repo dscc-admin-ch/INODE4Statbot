@@ -404,6 +404,9 @@ load_dotenv()
 gpttranslateserver = "http://"+os.getenv("GPTSERVER")+"/statbot-api/"
 llama7btranslateserver = "http://"+os.getenv("LLAMA7BSERVER")+"/statbot-api/"
 llama70btranslateserver = ""#"http://"+os.getenv("LLAMA70BSERVER")+"/statbot-api/"
+
+# Provide vllm adress in .env
+vllmconnection = "http://"+os.getenv("VLLMSERVER")+"/v1/"
 if not DUMMY_DATABASE:
     dbconn = pgr.connect(dbname=os.getenv("DB_SCHEMA"),user=os.getenv("DB_USERNAME"),password=os.getenv("DB_PASS"),host=os.getenv("DB_HOST"),port=os.getenv("DB_PORT"),options="-c search_path="+os.getenv("DB_DATABASE"))
     dbconn.set_session(readonly=True)
