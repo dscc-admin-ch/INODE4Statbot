@@ -235,14 +235,16 @@ def translatequery():
         return "Bad Request: No Table Present",400
     if not sysname:
         return "Bad Request: No System Name Present",400
-    if sysname == "chatgpt":
-        translateserver = gpttranslateserver
-    elif sysname == "llama7b":
-        translateserver = llama7btranslateserver
-    elif sysname == "llama70b":
-        translateserver = llama70btranslateserver
-    else:
-        return "Bad Request: Unknown System",400
+
+    translateserver = vllmconnection
+    #if sysname == "chatgpt":
+    #    translateserver = gpttranslateserver
+    #elif sysname == "llama7b":
+    #    translateserver = llama7btranslateserver
+    #elif sysname == "llama70b":
+    #    translateserver = llama70btranslateserver
+    #else:
+    #    return "Bad Request: Unknown System",400
     queryid = str(uuid.uuid4())
     if DUMMY_TRANSLATOR:
         if FAKE_LOADING:
@@ -375,7 +377,7 @@ def intentcorrections():
         return jsonify({"status":"ERROR","error":"LOGGING_ERROR"})
     sys.stderr.write(f"[IntentCorrections] Correction for intent of query \"{query}\": {value}.\n")
     return jsonify({"status":"OK"})
-        
+
 @app.route("/api/translationcorrections",methods=["POST"])
 def translationcorrections():
     if request.method == "OPTIONS":
@@ -398,12 +400,12 @@ def translationcorrections():
         return jsonify({"status":"ERROR","error":"LOGGING_ERROR"})
     sys.stderr.write(f"[TranslationCorrections] Correction for translation of query \"{query}\" on table {table}: {value}.\n")
     return jsonify({"status":"OK"})
-    
+
 
 load_dotenv()
-gpttranslateserver = "http://"+os.getenv("GPTSERVER")+"/statbot-api/"
-llama7btranslateserver = "http://"+os.getenv("LLAMA7BSERVER")+"/statbot-api/"
-llama70btranslateserver = ""#"http://"+os.getenv("LLAMA70BSERVER")+"/statbot-api/"
+# gpttranslateserver = "http://"+os.getenv("GPTSERVER")+"/statbot-api/"
+# llama7btranslateserver = "http://"+os.getenv("LLAMA7BSERVER")+"/statbot-api/"
+# llama70btranslateserver = ""#"http://"+os.getenv("LLAMA70BSERVER")+"/statbot-api/"
 
 # Provide vllm adress in .env
 vllmconnection = "http://"+os.getenv("VLLMSERVER")+"/v1/"
