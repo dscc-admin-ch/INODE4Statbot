@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+""" from fastapi import FastAPI
 import uvicorn
 from pydantic import BaseModel
 from typing import Union
@@ -40,4 +40,4 @@ async def call_openai(db_id, query:QueryItem):
     }}
 
 if __name__ == '__main__':
-    uvicorn.run(app, port=8000, host='0.0.0.0')
+    uvicorn.run(app, port=8000, host='0.0.0.0') """

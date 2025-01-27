@@ -42,17 +42,17 @@ def find_template(table_name):
     
 
 
-def open_ai_call(question, table_name, api_key):
-    os.environ["OPENAI_API_KEY"] = api_key
+def query_ingeneering_and_call(question, table_name):
+    #os.environ["OPENAI_API_KEY"] = api_key
     
     prompt_template = find_template(table_name)  # divorces_duration_of_marriage_age_classes.json
 
-    model_name = "gpt-3.5-turbo-16k"
+    model_name = "Phi-3.5-mini-instruct"
 
     inference_server_url = "https://user-jonasmorin-915289-vllm-user.lab.sspcloud.fr/v1"
 
     llm = ChatOpenAI(
-        model="/root/.cache/huggingface/Phi-3.5-mini-instruct",
+        model="/root/.cache/huggingface/" + model_name,
         openai_api_key="EMPTY",
         openai_api_base=inference_server_url,
         max_tokens=5,

@@ -14,7 +14,7 @@ import bcrypt
 from datetime import datetime,timedelta
 
 from tableselector import tableranker
-
+from vllm_call import query_ingeneering_and_call
 
 REQUIRE_FULL_LOGIN = False
 REQUIRE_GPT_LOGIN = True
@@ -236,14 +236,14 @@ def translatequery():
     if not sysname:
         return "Bad Request: No System Name Present",400
 
-    translateserver = vllmconnection
     queryid = str(uuid.uuid4())
     if DUMMY_TRANSLATOR:
         if FAKE_LOADING:
             time.sleep(3)
         return jsonify({"status":"OK","sql":sqlparse.format("select * from stock_vehicles limit 100",reindent=True,keyword_case='upper'),"explanation":"blah blah\n\nijodjwodj\ndjwojdwjdowjdiejdowjedowijwoiejdowijd oiwjdowoidjwoijdoiej wiowdiwojdiowjdj\n\n\neoijdw","execution_time":1.0009,"token_count":998,"status_code":200,"message":"OK","query_id":queryid})
     try:
-        r = requests.put(translateserver+tbl,headers={"Content-Type":"application/json"},json={"question":qry,"id":0})
+        r = query_ingeneering_and_call(question, tbl)
+        #r = requests.put(translateserver+tbl,headers={"Content-Type":"application/json"},json={"question":qry,"id":0})
     except Exception as e:
         sys.stderr.write(f"[QueryTranslator] CONNECTION ERROR (Query: \"{qry}\"; Table: {tbl}; System: {sysname})\n")
         return jsonify({"status":"ERROR","error":"CONNECTION_ERROR","sql":"---Error connecting to Translation Server","query_id":queryid,"explanation":"","execution_time":-1,"token_count":-1,"status_code":500,"message":str(e)})
