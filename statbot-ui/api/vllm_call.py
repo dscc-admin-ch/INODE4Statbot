@@ -3,11 +3,17 @@ import time
 
 import os
 from sqlalchemyWrapper import *
-from langchain import OpenAI
+#from langchain import OpenAI
 from few_shot_prompts_statbot import *
 from langchain import LLMChain
 import tiktoken
-
+from langchain_core.messages import HumanMessage, SystemMessage
+from langchain_core.prompts.chat import (
+    ChatPromptTemplate,
+    HumanMessagePromptTemplate,
+    SystemMessagePromptTemplate,
+)
+from langchain_openai import ChatOpenAI
 
 
 def num_tokens_from_string(string: str, encoding_name: str) -> int:
@@ -43,14 +49,25 @@ def open_ai_call(question, table_name, api_key):
 
     model_name = "gpt-3.5-turbo-16k"
 
-    llm = OpenAI(temperature=0,
-                 model_name= model_name,
-                 n = 1,
-                 stream = False,
-                 max_tokens = 1500,
-                 top_p = 1.0,
-                 frequency_penalty=0.0,
-                 presence_penalty=0.0)
+    inference_server_url = "https://user-jonasmorin-915289-vllm-user.lab.sspcloud.fr/v1"
+
+    llm = ChatOpenAI(
+        model="/root/.cache/huggingface/Phi-3.5-mini-instruct",
+        openai_api_key="EMPTY",
+        openai_api_base=inference_server_url,
+        max_tokens=5,
+        temperature=0,
+    )
+
+    #llm = OpenAI(temperature=0,
+    #             model_name= model_name,
+    #             n = 1,
+    #             stream = False,
+    #             max_tokens = 1500,
+    #             top_p = 1.0,
+    #             frequency_penalty=0.0,
+    #             presence_penalty=0.0)
+
     tic = time.perf_counter()
     llm_chain = LLMChain(llm=llm, prompt=prompt_template)
     sql = None

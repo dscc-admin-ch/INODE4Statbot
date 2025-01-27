@@ -237,14 +237,6 @@ def translatequery():
         return "Bad Request: No System Name Present",400
 
     translateserver = vllmconnection
-    #if sysname == "chatgpt":
-    #    translateserver = gpttranslateserver
-    #elif sysname == "llama7b":
-    #    translateserver = llama7btranslateserver
-    #elif sysname == "llama70b":
-    #    translateserver = llama70btranslateserver
-    #else:
-    #    return "Bad Request: Unknown System",400
     queryid = str(uuid.uuid4())
     if DUMMY_TRANSLATOR:
         if FAKE_LOADING:
