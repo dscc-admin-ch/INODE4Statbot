@@ -60,8 +60,8 @@ def query_engineering_and_call(question, table_name, qry_id):
     )
 
     tic = time.perf_counter()
-    llm_chain = LLMChain(llm=llm, prompt=prompt_template)
-    # llm_chain = llm | prompt_template
+    # llm_chain = LLMChain(llm=llm, prompt=prompt_template)
+    llm_chain = prompt_template | llm
     sql = None
 
     ddl = schema_db_postgres_statbot_zhaw(include_tables=['spatial_unit', table_name],
@@ -75,22 +75,25 @@ def query_engineering_and_call(question, table_name, qry_id):
 
     sys.stderr.write(f"llm_inputs: {llm_inputs}\n")
 
-    #num_tokens = len(f"{llm_inputs}".split())
-
-    prompts = llm_chain.prep_prompts([llm_inputs])
-    sys.stderr.write(f"Prompts: {prompts}\n")
-    prompt_strings = [p.to_string() for p in prompts[0]]
+    prompt_strings = prompt_template.format(input = question, table_info = ddl)
     sys.stderr.write(f"Prompt_string: {prompt_strings}\n")
+
+    # num_tokens = len(f"{llm_inputs}".split())
+
+    # prompts = llm_chain.prep_prompts([llm_inputs])
+    # sys.stderr.write(f"Prompts: {prompts}\n")
+    # prompt_strings = [p.to_string() for p in prompts[0]]
+    # sys.stderr.write(f"Prompt_string: {prompt_strings}\n")
 
     # check the length:
     # Write function to take string input and return number of tokens
-    num_tokens = num_tokens_from_string(prompt_strings[0], model_name)
+    # num_tokens = num_tokens_from_string(prompt_strings[0], model_name)
 
-    sys.stderr.write(f"Starting  generation: #input-tokens {num_tokens}")
+    sys.stderr.write(f"Starting  generation:\n")
     while sql is None:
         try:
-            sql = llm_chain.run(**llm_inputs)
-            # sql = llm_chain.invoke(**llm_inputs)
+            # sql = llm_chain.run(**llm_inputs)
+            sql = llm_chain.invoke(llm_inputs)
             sys.stderr.write(f"Question: {question}\n")
             sys.stderr.write(f"sql: {sql}\n")
         except Exception as e:
@@ -99,13 +102,16 @@ def query_engineering_and_call(question, table_name, qry_id):
             pass
     ## time ###
     toc = time.perf_counter()
+
+    num_tokens = sql.response_metadata['token_usage']['total_tokens']
+    sql_response = sql.content
     
     process_time=toc-tic
     print(f"Process Time= {process_time:0.4f} second")
     r = {"message": {
         "db_id": table_name,
         "id": qry_id,
-        "generated_query": sql.replace("\n", " ").replace("\n\n", " ").replace(" ", " ").replace("  ", " "),
+        "generated_query": sql_response.replace("\n", " ").replace("\n\n", " ").replace(" ", " ").replace("  ", " "),
         "prompt": prompt_strings,
         "question": question,
         "time": process_time,
