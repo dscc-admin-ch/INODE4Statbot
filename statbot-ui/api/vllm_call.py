@@ -1,6 +1,5 @@
-
 import time
-
+import sys
 import os
 from sqlalchemyWrapper import *
 #from langchain import OpenAI
@@ -18,8 +17,10 @@ from langchain_openai import ChatOpenAI
 
 def num_tokens_from_string(string: str, encoding_name: str) -> int:
     """Returns the number of tokens in a text string."""
-    encoding = tiktoken.encoding_for_model(encoding_name)
-    num_tokens = len(encoding.encode(string))
+    # encoding = tiktoken.encoding_for_model(encoding_name)
+
+    # implement an easy way to count token
+    num_tokens = len(string.split())
     return num_tokens
 
 def find_template(table_name):
@@ -42,8 +43,10 @@ def find_template(table_name):
     
 
 
-def query_ingeneering_and_call(question, table_name):
+def query_engineering_and_call(question, table_name, qry_id):
     #os.environ["OPENAI_API_KEY"] = api_key
+
+    sys.stderr.write(f"1. Query: \"{question}\"; Table: \"{table_name}\"\n")
     
     prompt_template = find_template(table_name)  # divorces_duration_of_marriage_age_classes.json
 
@@ -59,14 +62,7 @@ def query_ingeneering_and_call(question, table_name):
         temperature=0,
     )
 
-    #llm = OpenAI(temperature=0,
-    #             model_name= model_name,
-    #             n = 1,
-    #             stream = False,
-    #             max_tokens = 1500,
-    #             top_p = 1.0,
-    #             frequency_penalty=0.0,
-    #             presence_penalty=0.0)
+    sys.stderr.write(f"2. Query: \"{question}\"; Table: \"{table_name}\"\n")
 
     tic = time.perf_counter()
     llm_chain = LLMChain(llm=llm, prompt=prompt_template)
@@ -74,6 +70,9 @@ def query_ingeneering_and_call(question, table_name):
 
     ddl = schema_db_postgres_statbot_zhaw(include_tables=['spatial_unit', table_name],
                              sample_number=5)
+
+    sys.stderr.write(f"3. Query: \"{question}\"; Table: \"{table_name}\"; Database schema: {ddl}\n")
+
     llm_inputs = {
         "input": question,
         # "top_k": args.sample_rows,
@@ -102,14 +101,16 @@ def query_ingeneering_and_call(question, table_name):
     
     process_time=toc-tic
     print(f"Process Time= {process_time:0.4f} second")
-    r = {
-        "question": question,
+    r = {"message": {
         "db_id": table_name,
+        "id": qry_id,
         "generated_query": sql.replace("\n", " ").replace("\n\n", " ").replace(" ", " ").replace("  ", " "),
         "prompt": prompt_strings,
-        "num_tokens":num_tokens,
-        "time":process_time
-    }
+        "question": question,
+        "time": process_time,
+        "num_tokens": num_tokens,
+    }}
+
     return r
 
 

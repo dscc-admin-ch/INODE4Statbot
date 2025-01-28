@@ -8,6 +8,8 @@ from sqlalchemy.engine import Engine
 from sqlalchemy.exc import ProgrammingError, SQLAlchemyError
 from sqlalchemy.schema import CreateTable
 
+import os
+
 
 class SQLDatabase:
     """SQLAlchemy wrapper around a database."""
@@ -450,8 +452,6 @@ def formatting(ddl, alias=False):
                 schema_prompt += column+":\t" + "\t".join(values) + "\n"
         schema_prompt += "\n"
     return schema_prompt
-
-
 
 
 

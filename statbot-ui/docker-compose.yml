@@ -6,9 +6,8 @@ services:
         image:
             statbot-api
         environment:
-            - GPTSERVER=${GPTSERVER}
-            - LLAMA7BSERVER=${LLAMA7BSERVER}
-            - LLAMA70BSERVER=${LLAMA70BSERVER}
+            - MODEL_NAME=${MODEL_NAME}
+            - INFERENCE_SERVER_URL=${INFERENCE_SERVER_URL}
             - DB_HOST=${DB_HOST}
             - DB_PORT=${DB_PORT}
             - DB_SCHEMA=${DB_SCHEMA}
