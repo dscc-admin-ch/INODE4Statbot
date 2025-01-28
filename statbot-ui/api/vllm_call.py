@@ -44,11 +44,8 @@ def find_template(table_name):
 
 
 def query_engineering_and_call(question, table_name, qry_id):
-    #os.environ["OPENAI_API_KEY"] = api_key
-
-    sys.stderr.write(f"1. Query: \"{question}\"; Table: \"{table_name}\"\n")
     
-    prompt_template = find_template(table_name)  # divorces_duration_of_marriage_age_classes.json
+    prompt_template = find_template(table_name)
 
     model_name = os.environ["MODEL_NAME"]
 
@@ -62,16 +59,13 @@ def query_engineering_and_call(question, table_name, qry_id):
         temperature=0,
     )
 
-    sys.stderr.write(f"2. Query: \"{question}\"; Table: \"{table_name}\"\n")
-
     tic = time.perf_counter()
     llm_chain = LLMChain(llm=llm, prompt=prompt_template)
+    # llm_chain = llm | prompt_template
     sql = None
 
     ddl = schema_db_postgres_statbot_zhaw(include_tables=['spatial_unit', table_name],
                              sample_number=5)
-
-    sys.stderr.write(f"3. Query: \"{question}\"; Table: \"{table_name}\"; Database schema: {ddl}\n")
 
     llm_inputs = {
         "input": question,
@@ -79,21 +73,28 @@ def query_engineering_and_call(question, table_name, qry_id):
         "table_info": ddl,
     }
 
+    sys.stderr.write(f"llm_inputs: {llm_inputs}\n")
+
+    #num_tokens = len(f"{llm_inputs}".split())
+
     prompts = llm_chain.prep_prompts([llm_inputs])
+    sys.stderr.write(f"Prompts: {prompts}\n")
     prompt_strings = [p.to_string() for p in prompts[0]]
+    sys.stderr.write(f"Prompt_string: {prompt_strings}\n")
 
     # check the length:
     # Write function to take string input and return number of tokens
     num_tokens = num_tokens_from_string(prompt_strings[0], model_name)
 
-    print(f"Starting  generation: #input-tokens {num_tokens}")
+    sys.stderr.write(f"Starting  generation: #input-tokens {num_tokens}")
     while sql is None:
         try:
             sql = llm_chain.run(**llm_inputs)
-            print(f"Question: {question}")
-            print(f"sql: {sql}")
+            # sql = llm_chain.invoke(**llm_inputs)
+            sys.stderr.write(f"Question: {question}\n")
+            sys.stderr.write(f"sql: {sql}\n")
         except Exception as e:
-            print(str(e))
+            sys.stderr.write(str(e))
             time.sleep(3)
             pass
     ## time ###
