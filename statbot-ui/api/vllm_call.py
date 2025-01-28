@@ -47,9 +47,9 @@ def query_ingeneering_and_call(question, table_name):
     
     prompt_template = find_template(table_name)  # divorces_duration_of_marriage_age_classes.json
 
-    model_name = "Phi-3.5-mini-instruct"
+    model_name = os.environ["MODEL_NAME"]
 
-    inference_server_url = "https://user-jonasmorin-915289-vllm-user.lab.sspcloud.fr/v1"
+    inference_server_url = os.environ["INFERENCE_SERVER_URL"]
 
     llm = ChatOpenAI(
         model="/root/.cache/huggingface/" + model_name,

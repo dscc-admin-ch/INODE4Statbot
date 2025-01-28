@@ -6,9 +6,8 @@ This package contains the front- and back-end code for the Statbot UI.
 
 To run, first create a `.env` with the following variables:
 
-	GPTSERVER=[ChatGPT endpoint hostname]:[port]
-	LLAMA7BSERVER=[Llama7b endpoint hostname]:[port]
-	ADMIN_MAIL=[Administrator contact email]
+	MODEL_NAME=[ModelName]
+	INFERENCE_SERVER_URL=[Onyxia service address]
 
 Along with the database parameters:
 

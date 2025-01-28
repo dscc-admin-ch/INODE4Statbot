@@ -283,7 +283,7 @@ def sqlresults():
             dbconn.close()
         except:
             pass
-        dbconn = pgr.connect(dbname="postgres",user="dbadmin@sdbpstatbot01",password="579fc314a8f73e881a9146901971d5b9",host="160.85.252.201",port="18001",options="-c search_path=public,experiment")
+        dbconn = pgr.connect(dbname=os.getenv("DB_DATABASE"),user=os.getenv("DB_USERNAME"),password=os.getenv("DB_PASS"),host=os.getenv("DB_HOST"),port=os.getenv("DB_PORT"),options="-c search_path="+os.getenv("DB_SCHEMA"))
         dbconn.set_session(readonly=True)
     with dbconn:
         with dbconn.cursor() as curs:
@@ -395,12 +395,6 @@ def translationcorrections():
 
 
 load_dotenv()
-# gpttranslateserver = "http://"+os.getenv("GPTSERVER")+"/statbot-api/"
-# llama7btranslateserver = "http://"+os.getenv("LLAMA7BSERVER")+"/statbot-api/"
-# llama70btranslateserver = ""#"http://"+os.getenv("LLAMA70BSERVER")+"/statbot-api/"
-
-# Provide vllm adress in .env
-vllmconnection = "http://"+os.getenv("VLLMSERVER")+"/v1/"
 if not DUMMY_DATABASE:
     dbconn = pgr.connect(dbname=os.getenv("DB_SCHEMA"),user=os.getenv("DB_USERNAME"),password=os.getenv("DB_PASS"),host=os.getenv("DB_HOST"),port=os.getenv("DB_PORT"),options="-c search_path="+os.getenv("DB_DATABASE"))
     dbconn.set_session(readonly=True)
