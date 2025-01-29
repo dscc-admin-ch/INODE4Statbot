@@ -55,8 +55,13 @@ def query_engineering_and_call(question, table_name, qry_id):
         model="/root/.cache/huggingface/" + model_name,
         openai_api_key="EMPTY",
         openai_api_base=inference_server_url,
-        max_tokens=5,
-        temperature=0,
+        max_tokens=1500,
+        n = 1,
+        stream = False,
+        top_p = 1.0,
+        frequency_penalty=0.0,
+        presence_penalty=0.0,
+        temperature=0.0
     )
 
     tic = time.perf_counter()
