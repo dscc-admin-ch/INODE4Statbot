@@ -1,4 +1,4 @@
-from langchain import PromptTemplate
+from langchain_core.prompts import ChatPromptTemplate
 
 
 def few_shot_template_baby_names():
@@ -47,12 +47,22 @@ def few_shot_template_baby_names():
     Only use the tables listed in the Database Schema information.
 
     [Database Schema]:\n{table_info}
+    '''
+
+    question = '''
     [Q]: {input}
     [SQL]: 
     '''
-    few_shot_prompt_template = PromptTemplate(
-        input_variables=["input", "table_info"],
-        template=prompt,
+    few_shot_prompt_template = ChatPromptTemplate(
+        [
+            (
+                "system",
+                prompt,
+            ),
+            (   "human", 
+                question
+            ),
+        ]
     )
     return few_shot_prompt_template
 
@@ -97,12 +107,22 @@ def few_shot_template_stock_vehicles():
     Only use the tables listed in the Database Schema information.
 
     [Database Schema]:\n{table_info}
+    '''
+
+    question = '''
     [Q]: {input}
     [SQL]: 
     '''
-    few_shot_prompt_template = PromptTemplate(
-        input_variables=["input", "table_info"],
-        template=prompt,
+    few_shot_prompt_template = ChatPromptTemplate(
+        [
+            (
+                "system",
+                prompt,
+            ),
+            (   "human", 
+                question
+            ),
+        ]
     )
     return few_shot_prompt_template
 
@@ -145,13 +165,22 @@ def few_shot_template_marriage_citizenship():
     Only use the tables listed in the Database Schema information.
 
     [Database Schema]:\n{table_info}
+    '''
+
+    question = '''
     [Q]: {input}
     [SQL]: 
     '''
-
-    few_shot_prompt_template = PromptTemplate(
-        input_variables=["input", "table_info"],
-        template=prompt,
+    few_shot_prompt_template = ChatPromptTemplate(
+        [
+            (
+                "system",
+                prompt,
+            ),
+            (   "human", 
+                question
+            ),
+        ]
     )
     return few_shot_prompt_template
 
@@ -192,12 +221,22 @@ def few_shot_template_resident_population_birthplace_citizenship_type():
     Only use the tables listed in the Database Schema information.
 
     [Database Schema]:\n{table_info}
+    '''
+
+    question = '''
     [Q]: {input}
     [SQL]: 
     '''
-    few_shot_prompt_template = PromptTemplate(
-        input_variables=["input", "table_info"],
-        template=prompt,
+    few_shot_prompt_template = ChatPromptTemplate(
+        [
+            (
+                "system",
+                prompt,
+            ),
+            (   "human", 
+                question
+            ),
+        ]
     )
     return few_shot_prompt_template
 
@@ -237,12 +276,22 @@ def few_shot_template_divorces_duration_of_marriage_citizenship_categories():
     Only use the tables listed in the Database Schema information.
 
     [Database Schema]:\n{table_info}
+    '''
+
+    question = '''
     [Q]: {input}
     [SQL]: 
     '''
-    few_shot_prompt_template = PromptTemplate(
-        input_variables=["input", "table_info"],
-        template=prompt,
+    few_shot_prompt_template = ChatPromptTemplate(
+        [
+            (
+                "system",
+                prompt,
+            ),
+            (   "human", 
+                question
+            ),
+        ]
     )
     return few_shot_prompt_template
 
@@ -269,12 +318,22 @@ def few_shot_template_divorces_duration_of_marriage_age_classes():
     Only use the tables listed in the Database Schema information.
 
     [Database Schema]:\n{table_info}
+    '''
+
+    question = '''
     [Q]: {input}
     [SQL]: 
     '''
-    few_shot_prompt_template = PromptTemplate(
-        input_variables=["input", "table_info"],
-        template=prompt,
+    few_shot_prompt_template = ChatPromptTemplate(
+        [
+            (
+                "system",
+                prompt,
+            ),
+            (   "human", 
+                question
+            ),
+        ]
     )
     return few_shot_prompt_template
 
@@ -287,11 +346,21 @@ def zero_shot_template():
     For counting use sum(amount) every time.
 
     [Database Schema]:\n{table_info}
+    '''
+
+    question = '''
     [Q]: {input}
     [SQL]: 
     '''
-    zero_shot_prompt_template = PromptTemplate(
-        input_variables=["input", "table_info"],
-        template=prompt,
+    few_shot_prompt_template = ChatPromptTemplate(
+        [
+            (
+                "system",
+                prompt,
+            ),
+            (   "human", 
+                question
+            ),
+        ]
     )
-    return zero_shot_prompt_template
+    return few_shot_prompt_template

@@ -3,7 +3,7 @@ nltk.download("punkt")
 nltk.download("stopwords")
 nltk.download("wordnet")
 nltk.download("averaged_perceptron_tagger")
-    
+
 import sqlite3
 
 logdb = sqlite3.connect("userdata/backendlog.db")

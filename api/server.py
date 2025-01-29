@@ -14,7 +14,7 @@ import bcrypt
 from datetime import datetime,timedelta
 
 from tableselector import tableranker
-
+from vllm_call import query_engineering_and_call
 
 REQUIRE_FULL_LOGIN = False
 REQUIRE_GPT_LOGIN = True
@@ -235,37 +235,32 @@ def translatequery():
         return "Bad Request: No Table Present",400
     if not sysname:
         return "Bad Request: No System Name Present",400
-    if sysname == "chatgpt":
-        translateserver = gpttranslateserver
-    elif sysname == "llama7b":
-        translateserver = llama7btranslateserver
-    elif sysname == "llama70b":
-        translateserver = llama70btranslateserver
-    else:
-        return "Bad Request: Unknown System",400
+
     queryid = str(uuid.uuid4())
     if DUMMY_TRANSLATOR:
         if FAKE_LOADING:
             time.sleep(3)
         return jsonify({"status":"OK","sql":sqlparse.format("select * from stock_vehicles limit 100",reindent=True,keyword_case='upper'),"explanation":"blah blah\n\nijodjwodj\ndjwojdwjdowjdiejdowjedowijwoiejdowijd oiwjdowoidjwoijdoiej wiowdiwojdiowjdj\n\n\neoijdw","execution_time":1.0009,"token_count":998,"status_code":200,"message":"OK","query_id":queryid})
     try:
-        r = requests.put(translateserver+tbl,headers={"Content-Type":"application/json"},json={"question":qry,"id":0})
+        r = query_engineering_and_call(qry, tbl, qry_id = 0)
+        #r = requests.put(translateserver+tbl,headers={"Content-Type":"application/json"},json={"question":qry,"id":0})
     except Exception as e:
-        sys.stderr.write(f"[QueryTranslator] CONNECTION ERROR (Query: \"{qry}\"; Table: {tbl}; System: {sysname})\n")
+        sys.stderr.write(f"[QueryTranslator] CONNECTION ERROR (Query: \"{qry}\"; Table: {tbl}; System: {sysname}); Error: {e})\n")
         return jsonify({"status":"ERROR","error":"CONNECTION_ERROR","sql":"---Error connecting to Translation Server","query_id":queryid,"explanation":"","execution_time":-1,"token_count":-1,"status_code":500,"message":str(e)})
-    if r.status_code != 200:
-        sys.stderr.write(f"[QueryTranslator] TRANSLATION ERROR (Query: \"{qry}\"; Table: {tbl}; System: {sysname}; Code: {r.status_code})\n")
-        return jsonify({"status":"ERROR","error":"TRANSLATION_ERROR","sql":"---Error retrieving SQL translation","query_id":queryid,"explanation":"","execution_time":-1,"token_count":-1,"status_code":r.status_code,"message":r.text})
-    proctime,numtokens = r.json()["message"].get("time",-1),r.json()["message"].get("num_tokens",-1)
-    explanation = r.json()["message"].get("full_output","")
+    #if r.status_code != 200:
+    #    sys.stderr.write(f"[QueryTranslator] TRANSLATION ERROR (Query: \"{qry}\"; Table: {tbl}; System: {sysname}; Code: {r.status_code})\n")
+    #    return jsonify({"status":"ERROR","error":"TRANSLATION_ERROR","sql":"---Error retrieving SQL translation","query_id":queryid,"explanation":"","execution_time":-1,"token_count":-1,"status_code":r.status_code,"message":r.text})
+    sys.stderr.write(f"[QueryTranslator] \"{r}\"")
+    proctime,numtokens = r["message"].get("time",-1),r["message"].get("num_tokens",-1)
+    explanation = r["message"].get("full_output","")
     logdb = sqlite3.connect("userdata/backendlog.db")
     curs = logdb.cursor()
-    curs.execute("insert into translatelog values (?,?,?,?,?,?,?,?,?,?);",(queryid,qry,tbl,sysname,proctime,numtokens,r.json()["message"]["generated_query"],explanation,userfromsessionid(sessionid),datetime.now()))
+    curs.execute("insert into translatelog values (?,?,?,?,?,?,?,?,?,?);",(queryid,qry,tbl,sysname,proctime,numtokens,r["message"]["generated_query"],explanation,userfromsessionid(sessionid),datetime.now()))
     logdb.commit()
     curs.close()
     logdb.close()
-    sys.stderr.write(f"[QueryTranslator] Query: \"{qry}\"; Table: {tbl}; System: {sysname}; Time: {proctime}; Tokens: {numtokens}; Result: {r.json()['message']['generated_query']}; Explanation: {explanation}\n")
-    return jsonify({"status":"OK","query_id":queryid,"sql":sqlparse.format(r.json()["message"]["generated_query"],reindent=True,keyword_case='upper'),"explanation":explanation,"execution_time":proctime,"token_count":numtokens,"status_code":200,"message":"OK"})
+    sys.stderr.write(f"[QueryTranslator] Query: \"{qry}\"; Table: {tbl}; System: {sysname}; Time: {proctime}; Tokens: {numtokens}; Result: {r['message']['generated_query']}; Explanation: {explanation}\n")
+    return jsonify({"status":"OK","query_id":queryid,"sql":sqlparse.format(r["message"]["generated_query"],reindent=True,keyword_case='upper'),"explanation":explanation,"execution_time":proctime,"token_count":numtokens,"status_code":200,"message":"OK"})
 
 @app.route("/api/sqlresults",methods=["POST"])
 def sqlresults():
@@ -289,7 +284,7 @@ def sqlresults():
             dbconn.close()
         except:
             pass
-        dbconn = pgr.connect(dbname="postgres",user="dbadmin@sdbpstatbot01",password="579fc314a8f73e881a9146901971d5b9",host="160.85.252.201",port="18001",options="-c search_path=public,experiment")
+        dbconn = pgr.connect(dbname=os.getenv("DB_DATABASE"),user=os.getenv("DB_USERNAME"),password=os.getenv("DB_PASS"),host=os.getenv("DB_HOST"),port=os.getenv("DB_PORT"),options="-c search_path="+os.getenv("DB_SCHEMA"))
         dbconn.set_session(readonly=True)
     with dbconn:
         with dbconn.cursor() as curs:
@@ -375,7 +370,7 @@ def intentcorrections():
         return jsonify({"status":"ERROR","error":"LOGGING_ERROR"})
     sys.stderr.write(f"[IntentCorrections] Correction for intent of query \"{query}\": {value}.\n")
     return jsonify({"status":"OK"})
-        
+
 @app.route("/api/translationcorrections",methods=["POST"])
 def translationcorrections():
     if request.method == "OPTIONS":
@@ -398,14 +393,11 @@ def translationcorrections():
         return jsonify({"status":"ERROR","error":"LOGGING_ERROR"})
     sys.stderr.write(f"[TranslationCorrections] Correction for translation of query \"{query}\" on table {table}: {value}.\n")
     return jsonify({"status":"OK"})
-    
+
 
 load_dotenv()
-gpttranslateserver = "http://"+os.getenv("GPTSERVER")+"/statbot-api/"
-llama7btranslateserver = "http://"+os.getenv("LLAMA7BSERVER")+"/statbot-api/"
-llama70btranslateserver = ""#"http://"+os.getenv("LLAMA70BSERVER")+"/statbot-api/"
 if not DUMMY_DATABASE:
-    dbconn = pgr.connect(dbname=os.getenv("DB_SCHEMA"),user=os.getenv("DB_USERNAME"),password=os.getenv("DB_PASS"),host=os.getenv("DB_HOST"),port=os.getenv("DB_PORT"),options="-c search_path="+os.getenv("DB_DATABASE"))
+    dbconn = pgr.connect(dbname=os.getenv("DB_DATABASE"),user=os.getenv("DB_USERNAME"),password=os.getenv("DB_PASS"),host=os.getenv("DB_HOST"),port=os.getenv("DB_PORT"),options="-c search_path="+os.getenv("DB_SCHEMA"))
     dbconn.set_session(readonly=True)
 else:
     dbconn = None

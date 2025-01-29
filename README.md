@@ -1,25 +1,29 @@
+# Statbot UI
 
-# INODE4Statbot
+This package contains the front- and back-end code for the Statbot UI.
 
-This repo contains the main modules of project INODE4Statbot, i.e., LLM webservice, the intent network and the UI.
+## Running the Server
 
-## Table of Contents
+To run, first create a `.env` with the following variables:
 
-## Introduction
+	MODEL_NAME=[ModelName]
+	INFERENCE_SERVER_URL=[Onyxia service address]
 
-INODE4Statbot is a project designed to provide a comprehensive solution for interactive and intelligent database querying by natural through a combination of LLM webservice, an intent network, and an intuitive user interface.
+Along with the database parameters:
 
-## Features
+	DB_HOST=
+	DB_PORT=
+	DB_SCHEMA=
+	DB_PASS=
+	DB_USERNAME=
+	DB_DATABASE=
 
-- **LLM Webservice**: Provides webservice with support of multiple LLMs.
-- **Intent Network**: Handles the mapping of query intents to specific databases.
-- **User Interface**: A GUI for interacting with the system.
+Then run `docker compose up` to build and start the server.
 
-## Installation
+### Importing/Exporting User Data
 
-To install INODE4Statbot, follow these steps:
+Once the server is running, the logs, whitelist and user data will be stored in `./userdata`. To import existing data from a previous instance, place it in `./userdata` before startup. If no existing user data has been provided, create an `admin` account and password using the login screen after startup.
 
-## Usage
+### Managing Access
 
-To start using INODE4Statbot, run the following command:
-
+The user whitelist and password reset functions can be accessed in a browser via the administrator control panel at `http://[URL]/admin`. Alternatively, the databases in `./userdata` can be modified directly.
