@@ -464,13 +464,7 @@ def schema_db_postgres_statbot_zhaw(include_tables=None, sample_number=0, alias=
     host=os.getenv("DB_HOST")
     port=os.getenv("DB_PORT")
     database=os.getenv("DB_DATABASE")
-
-    # host = '160.85.252.201'
-    # port = 18001
-    # database = 'postgres'
-    # username = 'statbot'
-    # password = 'statbot'
-    # schema = 'experiment'
+    
     database_uri = f'postgresql://{username}:{password}@{host}:{str(port)}/{database}'
     db = SQLDatabase.from_uri(database_uri, schema=schema,
                               include_tables= include_tables,
