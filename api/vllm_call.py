@@ -2,7 +2,6 @@ import time
 import sys
 import os
 from sqlalchemyWrapper import *
-#from langchain import OpenAI
 from few_shot_prompts_statbot import *
 from langchain import LLMChain
 import tiktoken
@@ -14,14 +13,6 @@ from langchain_core.prompts.chat import (
 )
 from langchain_openai import ChatOpenAI
 
-
-def num_tokens_from_string(string: str, encoding_name: str) -> int:
-    """Returns the number of tokens in a text string."""
-    # encoding = tiktoken.encoding_for_model(encoding_name)
-
-    # implement an easy way to count token
-    num_tokens = len(string.split())
-    return num_tokens
 
 def find_template(table_name):
     
@@ -39,8 +30,7 @@ def find_template(table_name):
         return few_shot_template_resident_population_birthplace_citizenship_type()
     else:
         return zero_shot_template()
-    
-    
+
 
 
 def query_engineering_and_call(question, table_name, qry_id):
@@ -65,7 +55,7 @@ def query_engineering_and_call(question, table_name, qry_id):
     )
 
     tic = time.perf_counter()
-    # llm_chain = LLMChain(llm=llm, prompt=prompt_template)
+    
     llm_chain = prompt_template | llm
     sql = None
 
@@ -74,7 +64,6 @@ def query_engineering_and_call(question, table_name, qry_id):
 
     llm_inputs = {
         "input": question,
-        # "top_k": args.sample_rows,
         "table_info": ddl,
     }
 
@@ -82,17 +71,6 @@ def query_engineering_and_call(question, table_name, qry_id):
 
     prompt_strings = prompt_template.format(input = question, table_info = ddl)
     sys.stderr.write(f"Prompt_string: {prompt_strings}\n")
-
-    # num_tokens = len(f"{llm_inputs}".split())
-
-    # prompts = llm_chain.prep_prompts([llm_inputs])
-    # sys.stderr.write(f"Prompts: {prompts}\n")
-    # prompt_strings = [p.to_string() for p in prompts[0]]
-    # sys.stderr.write(f"Prompt_string: {prompt_strings}\n")
-
-    # check the length:
-    # Write function to take string input and return number of tokens
-    # num_tokens = num_tokens_from_string(prompt_strings[0], model_name)
 
     sys.stderr.write(f"Starting  generation:\n")
     while sql is None:
@@ -124,11 +102,3 @@ def query_engineering_and_call(question, table_name, qry_id):
     }}
 
     return r
-
-
-
-
-# Press the green button in the gutter to run the script.
-# if __name__ == '__main__':
-#    open_ai_call(question="Give me the babay names in canton zurich 0n 2020",table_name="baby_names_favorite_firstname")
-
