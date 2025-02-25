@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: api-config
+data:
+  MODEL_NAME: "{{ .Values.api.env.MODEL_NAME }}"
+  INFERENCE_SERVER_URL: "{{ .Values.api.env.INFERENCE_SERVER_URL }}"
+  DB_HOST: "{{ .Values.api.env.DB_HOST }}"
+  DB_PORT: "{{ .Values.api.env.DB_PORT }}"
+  DB_SCHEMA: "{{ .Values.api.env.DB_SCHEMA }}"
+  DB_DATABASE: "{{ .Values.api.env.DB_DATABASE }}"

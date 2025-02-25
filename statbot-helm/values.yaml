@@ -1,0 +1,24 @@
+api:
+  image: "lancelotmarti/statbot-api"
+  tag: "latest"
+  env:
+    MODEL_NAME: "default_model"
+    INFERENCE_SERVER_URL: "http://inference-server"
+    DB_HOST: "db-host"
+    DB_PORT: "5432"
+    DB_SCHEMA: "public"
+    DB_USERNAME: "user"
+    DB_PASS: "password"
+    DB_DATABASE: "statbot-db"
+
+ui:
+  image: "lancelotmarti/statbot-ui"
+  tag: "latest"
+  port: 2000
+  env:
+    ADMIN_MAIL: "admin@example.com"
+
+service:
+  type: NodePort  # Can be LoadBalancer or ClusterIP
+  apiPort: 5000
+  uiPort: 2000
