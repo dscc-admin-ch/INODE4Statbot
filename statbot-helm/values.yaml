@@ -18,7 +18,7 @@ ui:
     ADMIN_MAIL: "admin@example.com"
 
 service:
-  type: NodePort  # Can be LoadBalancer or ClusterIP
+  type: NodePort
   apiPort: 5000
 
 ingress:
