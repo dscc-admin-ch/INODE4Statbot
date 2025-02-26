@@ -5,6 +5,9 @@ metadata:
   labels:
     name: statbot-ui
 spec:
+  tls:
+  - hosts:
+      - {{ .Values.ingress.hostname }}
   rules:
   - host: {{ .Values.ingress.hostname }}
     http:

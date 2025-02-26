@@ -14,14 +14,13 @@ api:
 ui:
   image: "lancelotmarti/statbot-ui"
   tag: "latest"
-  port: 2000
   env:
     ADMIN_MAIL: "admin@example.com"
 
 service:
   type: NodePort  # Can be LoadBalancer or ClusterIP
   apiPort: 5000
-  uiPort: 2000
 
 ingress:
-  hostname: "statbot-example.ch"
+    enabled: true
+    hostname:  "statbot.lab.sspcloud.fr"

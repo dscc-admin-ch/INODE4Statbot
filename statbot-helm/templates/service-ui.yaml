@@ -7,6 +7,6 @@ spec:
     app: statbot-ui
   ports:
     - protocol: TCP
-      port: {{ .Values.service.uiPort }}
+      port: 2000
       targetPort: 2000
   type: {{ .Values.service.type }}
