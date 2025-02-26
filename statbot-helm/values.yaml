@@ -22,3 +22,6 @@ service:
   type: NodePort  # Can be LoadBalancer or ClusterIP
   apiPort: 5000
   uiPort: 2000
+
+ingress:
+  hostname: "statbot-example.ch"

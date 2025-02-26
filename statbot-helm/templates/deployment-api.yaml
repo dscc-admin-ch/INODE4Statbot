@@ -1,16 +1,16 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: statbot-api
+  name: api
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: statbot-api
+      app: api
   template:
     metadata:
       labels:
-        app: statbot-api
+        app: api
     spec:
       containers:
         - name: api
@@ -20,10 +20,3 @@ spec:
                 name: api-config
             - secretRef:
                 name: api-secrets
-          volumeMounts:
-            - name: userdata
-              mountPath: /app/userdata
-      volumes:
-        - name: userdata
-          persistentVolumeClaim:
-            claimName: api-pvc
