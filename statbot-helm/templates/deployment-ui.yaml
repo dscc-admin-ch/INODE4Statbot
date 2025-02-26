@@ -16,7 +16,7 @@ spec:
         - name: ui
           image: "{{ .Values.ui.image }}:{{ .Values.ui.tag }}"
           ports:
-            - containerPort: 80
+            - containerPort: 2000
           env:
             - name: REACT_APP_ADMIN_MAIL
               value: "{{ .Values.ui.env.ADMIN_MAIL }}"

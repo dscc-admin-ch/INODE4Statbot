@@ -6,7 +6,7 @@ metadata:
     name: statbot-ui
 spec:
   rules:
-  - host: {{ .Values.ingress.hostname | quote }}
+  - host: {{ .Values.ingress.hostname }}
     http:
       paths:
       - pathType: Prefix
@@ -15,4 +15,4 @@ spec:
           service:
             name: statbot-ui
             port: 
-              number: {{ .Values.service.uiPort }}
+              number: 2000
