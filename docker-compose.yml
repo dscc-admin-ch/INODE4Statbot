@@ -7,6 +7,7 @@ services:
             statbot-api
         environment:
             - MODEL_NAME=${MODEL_NAME}
+            - MODEL_PATH=${MODEL_PATH}
             - INFERENCE_SERVER_URL=${INFERENCE_SERVER_URL}
             - DB_HOST=${DB_HOST}
             - DB_PORT=${DB_PORT}
@@ -25,7 +26,7 @@ services:
         image:
             statbot-ui
         ports:
-            - 80:80
+            - 2000:2000
         depends_on:
             - api
         

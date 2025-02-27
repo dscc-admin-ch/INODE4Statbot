@@ -38,11 +38,12 @@ def query_engineering_and_call(question, table_name, qry_id):
     prompt_template = find_template(table_name)
 
     model_name = os.environ["MODEL_NAME"]
+    model_path = os.environ["MODEL_PATH"]
 
     inference_server_url = os.environ["INFERENCE_SERVER_URL"]
 
     llm = ChatOpenAI(
-        model="/root/.cache/huggingface/" + model_name,
+        model=model_path + model_name,
         openai_api_key="EMPTY",
         openai_api_base=inference_server_url,
         max_tokens=1500,
