@@ -7,6 +7,7 @@ This package contains the front- and back-end code for the Statbot UI.
 To run, first create a `.env` with the following variables:
 
 	MODEL_NAME=[ModelName]
+	MODEL_PATH="model_path"
 	INFERENCE_SERVER_URL=[Onyxia service address]
 
 Along with the database parameters:
