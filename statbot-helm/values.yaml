@@ -3,6 +3,7 @@ api:
   tag: "latest"
   env:
     MODEL_NAME: "default_model"
+    MODEL_PATH: "model_path" # IF LOCAL: /root/.cache/huggingface/
     INFERENCE_SERVER_URL: "http://inference-server"
     DB_HOST: "db-host"
     DB_PORT: "5432"

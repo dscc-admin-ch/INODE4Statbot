@@ -4,6 +4,7 @@ metadata:
   name: api-config
 data:
   MODEL_NAME: "{{ .Values.api.env.MODEL_NAME }}"
+  MODEL_PATH: "{{ .Values.api.env.MODEL_PATH }}"
   INFERENCE_SERVER_URL: "{{ .Values.api.env.INFERENCE_SERVER_URL }}"
   DB_HOST: "{{ .Values.api.env.DB_HOST }}"
   DB_PORT: "{{ .Values.api.env.DB_PORT }}"
