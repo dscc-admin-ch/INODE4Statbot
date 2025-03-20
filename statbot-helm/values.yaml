@@ -2,9 +2,7 @@ api:
   image: "lancelotmarti/statbot-api"
   tag: "latest"
   env:
-    MODEL_NAME: "default_model"
-    MODEL_PATH: "model_path" # IF LOCAL: /root/.cache/huggingface/
-    INFERENCE_SERVER_URL: "http://inference-server"
+    MODEL_PATH: "" # to remove
     DB_HOST: "db-host"
     DB_PORT: "5432"
     DB_SCHEMA: "public"
@@ -25,3 +23,45 @@ service:
 ingress:
     enabled: true
     hostname:  "statbot.lab.sspcloud.fr"
+
+vllm:
+  nameOverride: ""
+  fullnameOverride: "llm-serving"
+  podAnnotations: {}
+
+  deployment:
+    image:
+      repository: vllm/vllm-openai
+      pullPolicy: Always
+      tag: latest
+    hftoken: your_hf_token
+    args:
+      model: microsoft/Phi-3-mini-4k-instruct
+      memoryutilization: 0.8
+      dtype: half
+      maxModelLen: 4096
+    gpu:
+      number: 1
+
+  service:
+    port:
+      number: 8000
+
+
+  ingress:
+      enabled: true
+      className: "nginx"
+      annotations:
+        nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
+      hostname: "chart-example.local"
+
+  s3:
+    enabled: false # Set to true to use S3
+    bucket: "your_bucket_name"
+    modelPath: "path_to_model"
+    # If not set and create is true, a name is generated using the fullname template
+    accessKeyId: ""
+    endpoint: ""
+    defaultRegion: ""
+    secretAccessKey: ""
+    sessionToken: ""

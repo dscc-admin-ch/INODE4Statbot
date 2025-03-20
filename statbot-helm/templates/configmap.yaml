@@ -3,9 +3,9 @@ kind: ConfigMap
 metadata:
   name: api-config
 data:
-  MODEL_NAME: "{{ .Values.api.env.MODEL_NAME }}"
+  MODEL_NAME: "{{ .Values.vllm.deployment.args.model }}"
   MODEL_PATH: "{{ .Values.api.env.MODEL_PATH }}"
-  INFERENCE_SERVER_URL: "{{ .Values.api.env.INFERENCE_SERVER_URL }}"
+  INFERENCE_SERVER_URL: "{{ .Values.vllm.ingress.hostname }}"
   DB_HOST: "{{ .Values.api.env.DB_HOST }}"
   DB_PORT: "{{ .Values.api.env.DB_PORT }}"
   DB_SCHEMA: "{{ .Values.api.env.DB_SCHEMA }}"

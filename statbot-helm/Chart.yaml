@@ -4,3 +4,9 @@ description: A Helm chart for deploying the Statbot API and UI
 type: application
 version: 0.0.1
 appVersion: 0.0.1
+
+dependencies:
+  - name: llm-serving
+    version: 0.0.5
+    repository: https://dscc-admin-ch.github.io/helm-charts
+    alias:  vllm

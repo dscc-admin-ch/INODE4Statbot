@@ -34,6 +34,8 @@ The user whitelist and password reset functions can be accessed in a browser via
 
 For now, on onyxia just clone this repo, adapt the `values.yaml` and run: 
 
+`helm dependency build ./statbot-helm/`
+
 `helm install statbot ./statbot-helm/`
 
 For now, ui is mapped to port 2000 (forced).
