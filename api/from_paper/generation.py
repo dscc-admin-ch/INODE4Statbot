@@ -415,9 +415,9 @@ def generate_sql_in_context_learning_similar_shots(args,db_config,llm, embedding
             nl2sql_pairs=[]
             scores=[]
             for item in answers:
-                print(item[0].metadata['question']) # print out score          
-                # print(item[0].metadata['query']) 
-                # print(item[0].metadata['rules']) 
+                print(item[0].metadata['question']) # print out score
+                # print(item[0].metadata['query'])
+                # print(item[0].metadata['rules'])
                 nl=item[0].metadata['question']
                 q=item[0].metadata['query']
                 score=item[1]

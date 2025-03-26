@@ -1,6 +1,8 @@
 from langchain_core.prompts import ChatPromptTemplate
 
 
+
+
 def few_shot_template_baby_names():
 
     prompt = '''
