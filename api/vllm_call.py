@@ -35,7 +35,7 @@ def find_template(table_name):
 
 def query_engineering_and_call(question, table_name, qry_id):
     
-    prompt_template = find_template(table_name)
+    prompt_template = generate_sql_in_context_learning_similar_shots(question, table_name)
 
     model_name = os.environ["MODEL_NAME"]
 
