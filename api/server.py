@@ -242,6 +242,7 @@ def translatequery():
             time.sleep(3)
         return jsonify({"status":"OK","sql":sqlparse.format("select * from stock_vehicles limit 100",reindent=True,keyword_case='upper'),"explanation":"blah blah\n\nijodjwodj\ndjwojdwjdowjdiejdowjedowijwoiejdowijd oiwjdowoidjwoijdoiej wiowdiwojdiowjdj\n\n\neoijdw","execution_time":1.0009,"token_count":998,"status_code":200,"message":"OK","query_id":queryid})
     try:
+        sys.stderr.write(f"In translatequery" + "/n")
         r = query_engineering_and_call(qry, tbl, qry_id = 0)
         #r = requests.put(translateserver+tbl,headers={"Content-Type":"application/json"},json={"question":qry,"id":0})
     except Exception as e:

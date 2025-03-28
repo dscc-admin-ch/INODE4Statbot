@@ -34,6 +34,8 @@ def find_template(table_name):
 
 
 def query_engineering_and_call(question, table_name, qry_id):
+
+    sys.stderr.write(f"inside query_engineering_and_call" + "/n")
     
     prompt_template = generate_sql_in_context_learning_similar_shots(question, table_name)
 

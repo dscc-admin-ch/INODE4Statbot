@@ -1,4 +1,6 @@
 import pandas as pd
+import os
+import sys
 from langchain_core.prompts import ChatPromptTemplate
 from langchain import PromptTemplate, FewShotPromptTemplate
 from langchain.prompts.example_selector import SemanticSimilarityExampleSelector
@@ -393,8 +395,12 @@ def few_shot_template_examples(example_prompt, example_selector):
 
 
 
-def generate_sql_in_context_learning_similar_shots(question, table_name, n_shots = 4, file_path = "../api/data/query_questions_db.csv"):
+def generate_sql_in_context_learning_similar_shots(question, table_name, n_shots = 4, file_path = "data/query_questions_db.csv"):
     # find the n_shots closest questions from the query_questions_db and the table
+    
+    sys.stderr.write(f"inside generate_sql_in_context_learning_similar_shots" + "/n")
+    sys.stderr.write(str(os.listdir()) + "/n")
+
     with open(file_path) as f:
         origin_of_shots = pd.read_csv(f, delimiter= ',')
 
@@ -413,6 +419,7 @@ def generate_sql_in_context_learning_similar_shots(question, table_name, n_shots
 
     embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/distiluse-base-multilingual-cased-v2")
 
+    vectorstore = None
     if vectorstore is not None:
         ########CLEAR THE VECTORSTORE
         vectorstore.delete_collection()
