@@ -427,11 +427,11 @@ def generate_sql_in_context_learning_similar_shots(question, table_name, n_shots
     vectorstore = Chroma.from_texts(to_vectorize, embeddings, metadatas=meta_data)
 
     # Lower score is more similar
-    answers = vectorstore.similarity_search_with_score(query = question, k = max_shot)
+    answers = vectorstore.similarity_search_with_score(query = question, k = n_shots)
 
     examples_selector = SemanticSimilarityExampleSelector(
         vectorstore=vectorstore,
-        k = max_shot,
+        k = n_shots,
     )
     examples_prompt = PromptTemplate(
         input_variables=["question","query"],
