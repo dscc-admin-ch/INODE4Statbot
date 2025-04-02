@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: api-config
+data:
+  MODEL_NAME: "{{ .Values.vllm.deployment.args.model }}"
+  MODEL_PATH: "{{ .Values.api.env.MODEL_PATH }}"
+  INFERENCE_SERVER_URL: "https://{{ .Values.vllm.ingress.hostname }}/v1"
+  DB_HOST: "{{ .Values.api.env.DB_HOST }}"
+  DB_PORT: "{{ .Values.api.env.DB_PORT }}"
+  DB_SCHEMA: "{{ .Values.api.env.DB_SCHEMA }}"
+  DB_DATABASE: "{{ .Values.api.env.DB_DATABASE }}"

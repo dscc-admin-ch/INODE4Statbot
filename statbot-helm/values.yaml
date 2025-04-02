@@ -1,0 +1,67 @@
+api:
+  image: "lancelotmarti/statbot-api"
+  tag: "latest"
+  env:
+    MODEL_PATH: "" # to remove
+    DB_HOST: "db-host"
+    DB_PORT: "5432"
+    DB_SCHEMA: "public"
+    DB_USERNAME: "user"
+    DB_PASS: "password"
+    DB_DATABASE: "statbot-db"
+
+ui:
+  image: "lancelotmarti/statbot-ui"
+  tag: "latest"
+  env:
+    ADMIN_MAIL: "admin@example.com"
+
+service:
+  type: NodePort
+  apiPort: 5000
+
+ingress:
+    enabled: true
+    hostname:  "statbot.lab.sspcloud.fr"
+
+vllm:
+  nameOverride: ""
+  fullnameOverride: "llm-serving"
+  podAnnotations: {}
+
+  deployment:
+    image:
+      repository: vllm/vllm-openai
+      pullPolicy: Always
+      tag: latest
+    hftoken: your_hf_token
+    args:
+      model: microsoft/Phi-3-mini-4k-instruct
+      memoryutilization: 0.8
+      dtype: half
+      maxModelLen: 4096
+    gpu:
+      number: 1
+
+  service:
+    port:
+      number: 8000
+
+
+  ingress:
+      enabled: true
+      className: "nginx"
+      annotations:
+        nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
+      hostname: "chart-example.local"
+
+  s3:
+    enabled: false # Set to true to use S3
+    bucket: "your_bucket_name"
+    modelPath: "path_to_model"
+    # If not set and create is true, a name is generated using the fullname template
+    accessKeyId: ""
+    endpoint: ""
+    defaultRegion: ""
+    secretAccessKey: ""
+    sessionToken: ""
