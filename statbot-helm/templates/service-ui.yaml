@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: statbot-ui
+spec:
+  selector:
+    app: statbot-ui
+  ports:
+    - protocol: TCP
+      port: 2000
+      targetPort: 2000
+  type: {{ .Values.service.type }}

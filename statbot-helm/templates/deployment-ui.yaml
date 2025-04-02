@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: statbot-ui
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: statbot-ui
+  template:
+    metadata:
+      labels:
+        app: statbot-ui
+    spec:
+      containers:
+        - name: ui
+          image: "{{ .Values.ui.image }}:{{ .Values.ui.tag }}"
+          ports:
+            - containerPort: 2000
+          env:
+            - name: REACT_APP_ADMIN_MAIL
+              value: "{{ .Values.ui.env.ADMIN_MAIL }}"

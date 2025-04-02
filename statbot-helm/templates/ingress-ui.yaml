@@ -1,0 +1,21 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: statbot-ui
+  labels:
+    name: statbot-ui
+spec:
+  tls:
+  - hosts:
+      - {{ .Values.ingress.hostname }}
+  rules:
+  - host: {{ .Values.ingress.hostname }}
+    http:
+      paths:
+      - pathType: Prefix
+        path: "/"
+        backend:
+          service:
+            name: statbot-ui
+            port: 
+              number: 2000
