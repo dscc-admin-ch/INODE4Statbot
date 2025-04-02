@@ -34,8 +34,13 @@ def find_template(table_name):
 
 
 def query_engineering_and_call(question, table_name, qry_id):
+
+    sys.stderr.write(f"inside query_engineering_and_call" + "/n")
     
-    prompt_template = find_template(table_name)
+    prompt_template = generate_sql_in_context_learning_similar_shots(question, table_name)
+
+    # For testing purposes
+    # prompt_template = zero_shot_template()
 
     model_name = os.environ["MODEL_NAME"]
     model_path = os.environ["MODEL_PATH"]
@@ -54,6 +59,19 @@ def query_engineering_and_call(question, table_name, qry_id):
         presence_penalty=0.0,
         temperature=0.0
     )
+
+    # llm = ChatOpenAI(
+    #     model="/root/.cache/huggingface/" + model_name,
+    #     openai_api_key="EMPTY",
+    #     openai_api_base=inference_server_url,
+    #     max_tokens=1500,
+    #     n = 1,
+    #     stream = False,
+    #     top_p = 1.0,
+    #     frequency_penalty=0.0,
+    #     presence_penalty=0.0,
+    #     temperature=0.0
+    # )
 
     tic = time.perf_counter()
     

@@ -1,4 +1,11 @@
+import pandas as pd
+import os
+import sys
 from langchain_core.prompts import ChatPromptTemplate
+from langchain import PromptTemplate, FewShotPromptTemplate
+from langchain.prompts.example_selector import SemanticSimilarityExampleSelector
+from langchain.vectorstores.chroma import Chroma
+from langchain.embeddings import HuggingFaceEmbeddings
 
 
 def few_shot_template_baby_names():
@@ -364,3 +371,69 @@ def zero_shot_template():
         ]
     )
     return few_shot_prompt_template
+
+
+def few_shot_template_examples(example_prompt, example_selector):
+    prefix = '''You are an helpful AI assistant who writes SQL query for a given question. Given the database described by the database schema below, write a SQL query that answers the question.\nDo not explain the SQL query.\nReturn just the query, so it can be run verbatim from your response.\n### Database Schema\n{table_info}
+    '''
+
+    few_shot_prompt = FewShotPromptTemplate(
+        # These are the examples we want to insert into the prompt.
+        example_selector = example_selector,
+        example_prompt = example_prompt,
+        # The prefix is some text that goes before the examples in the prompt.
+        # Usually, this consists of intructions.
+        prefix= prefix,
+        # The suffix is some text that goes after the examples in the prompt.
+        # Usually, this is where the user input will go
+        suffix= "### Question\n{input}\n### SQL query\n",
+        # The input variables are the variables that the overall prompt expects.
+        input_variables=["input", "table_info"],
+        example_separator="\n\n",
+    )
+    return few_shot_prompt
+
+
+
+def generate_sql_in_context_learning_similar_shots(question, table_name, n_shots = 3, file_path = "data/query_questions_db.csv"):
+    # find the n_shots closest questions from the query_questions_db and the table
+
+    with open(file_path) as f:
+        origin_of_shots = pd.read_csv(f, delimiter= ',')
+
+    examples = origin_of_shots.loc[origin_of_shots['db_id']==table_name]
+    examples = examples.reset_index()
+    few_shot_examples = []
+    meta_data = []
+
+    for j in range(len(examples)):
+        ex_question = examples.loc[j,'question'].replace("\n","").strip()
+        ex_query = examples.loc[j,'query']
+        few_shot_examples.append({"question":ex_question})
+        meta_data.append({"question":ex_question,"query":ex_query})
+
+    to_vectorize = [" ".join(example.values()) for example in few_shot_examples]
+
+    embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/distiluse-base-multilingual-cased-v2")
+
+    vectorstore = None
+    if vectorstore is not None:
+        ########CLEAR THE VECTORSTORE
+        vectorstore.delete_collection()
+
+    vectorstore = Chroma.from_texts(to_vectorize, embeddings, metadatas=meta_data)
+
+    # Lower score is more similar
+    answers = vectorstore.similarity_search_with_score(query = question, k = n_shots)
+
+    examples_selector = SemanticSimilarityExampleSelector(
+        vectorstore=vectorstore,
+        k = n_shots,
+    )
+    examples_prompt = PromptTemplate(
+        input_variables=["question","query"],
+        template="### Question\n{question}\n### SQL query\n{query}",
+    )
+    prompt_template = few_shot_template_examples(examples_prompt, examples_selector)
+
+    return prompt_template
