@@ -1,17 +1,17 @@
 api:
-  image: "lancelotmarti/statbot-api"
+  image: "jono711/statbot-api"
   tag: "latest"
   env:
-    MODEL_PATH: "" # to remove
-    DB_HOST: "db-host"
-    DB_PORT: "5432"
-    DB_SCHEMA: "public"
-    DB_USERNAME: "user"
+    MODEL_PATH: "" # IF LOCAL: /root/.cache/huggingface/
+    DB_HOST: "160.85.252.201"
+    DB_PORT: "18001"
+    DB_SCHEMA: "experiment"
+    DB_USERNAME: "read_only"
     DB_PASS: "password"
-    DB_DATABASE: "statbot-db"
+    DB_DATABASE: "postgres"
 
 ui:
-  image: "lancelotmarti/statbot-ui"
+  image: "jono711/statbot-ui"
   tag: "latest"
   env:
     ADMIN_MAIL: "admin@example.com"
@@ -34,12 +34,12 @@ vllm:
       repository: vllm/vllm-openai
       pullPolicy: Always
       tag: latest
-    hftoken: your_hf_token
+    hftoken: ton_token
     args:
-      model: microsoft/Phi-3-mini-4k-instruct
+      model: meta-llama/Llama-3.2-3B-Instruct
       memoryutilization: 0.8
       dtype: half
-      maxModelLen: 4096
+      maxModelLen: 8208
     gpu:
       number: 1
 
@@ -53,7 +53,7 @@ vllm:
       className: "nginx"
       annotations:
         nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
-      hostname: "chart-example.local"
+      hostname: "llm-serving-statbot.lab.sspcloud.fr"
 
   s3:
     enabled: false # Set to true to use S3
