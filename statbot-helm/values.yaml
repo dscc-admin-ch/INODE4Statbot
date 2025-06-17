@@ -2,7 +2,7 @@ api:
   image: "jono711/statbot-api"
   tag: "latest"
   env:
-    MODEL_PATH: "" # IF LOCAL: /root/.cache/huggingface/
+    MODEL_PATH: "" 
     DB_HOST: "160.85.252.201"
     DB_PORT: "18001"
     DB_SCHEMA: "experiment"
@@ -22,7 +22,7 @@ service:
 
 ingress:
     enabled: true
-    hostname:  "statbot.lab.sspcloud.fr"
+    hostname: "statbot.lab.sspcloud.fr"
 
 vllm:
   nameOverride: ""

@@ -16,11 +16,14 @@ from datetime import datetime,timedelta
 from tableselector import tableranker
 from vllm_call import query_engineering_and_call
 
+# Rest from INODE4STATBOT 
 REQUIRE_FULL_LOGIN = False
 REQUIRE_GPT_LOGIN = True
 DUMMY_TRANSLATOR = False
 DUMMY_DATABASE = False
 FAKE_LOADING = False
+        
+# -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 def validsession(sessionid):
     logindb = sqlite3.connect("logins.db",detect_types=sqlite3.PARSE_DECLTYPES|sqlite3.PARSE_COLNAMES)
@@ -195,6 +198,8 @@ def logoutreq():
     userdb.close()
     return jsonify({"status":"OK"})
         
+# -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
 @app.route("/api/tableintent",methods=["POST"])
 def tableintent():
     if request.method == "OPTIONS":
@@ -244,13 +249,9 @@ def translatequery():
     try:
         sys.stderr.write(f"In translatequery" + "/n")
         r = query_engineering_and_call(qry, tbl, qry_id = 0)
-        #r = requests.put(translateserver+tbl,headers={"Content-Type":"application/json"},json={"question":qry,"id":0})
     except Exception as e:
         sys.stderr.write(f"[QueryTranslator] CONNECTION ERROR (Query: \"{qry}\"; Table: {tbl}; System: {sysname}); Error: {e})\n")
         return jsonify({"status":"ERROR","error":"CONNECTION_ERROR","sql":"---Error connecting to Translation Server","query_id":queryid,"explanation":"","execution_time":-1,"token_count":-1,"status_code":500,"message":str(e)})
-    #if r.status_code != 200:
-    #    sys.stderr.write(f"[QueryTranslator] TRANSLATION ERROR (Query: \"{qry}\"; Table: {tbl}; System: {sysname}; Code: {r.status_code})\n")
-    #    return jsonify({"status":"ERROR","error":"TRANSLATION_ERROR","sql":"---Error retrieving SQL translation","query_id":queryid,"explanation":"","execution_time":-1,"token_count":-1,"status_code":r.status_code,"message":r.text})
     sys.stderr.write(f"[QueryTranslator] \"{r}\"")
     proctime,numtokens = r["message"].get("time",-1),r["message"].get("num_tokens",-1)
     explanation = r["message"].get("full_output","")
@@ -273,6 +274,8 @@ def sqlresults():
         return jsonify({"status":"ERROR","error":"INVALID_SESSION_ID"})
     qry = request.json.get("query","")
     sys.stderr.write(f"[SQLExecutor] Query: \"{qry}\"\n")
+
+    # Rest from INODE4STATBOT 
     if DUMMY_DATABASE:
         if FAKE_LOADING:
             time.sleep(3)
@@ -394,7 +397,8 @@ def translationcorrections():
         return jsonify({"status":"ERROR","error":"LOGGING_ERROR"})
     sys.stderr.write(f"[TranslationCorrections] Correction for translation of query \"{query}\" on table {table}: {value}.\n")
     return jsonify({"status":"OK"})
-
+        
+# -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 load_dotenv()
 if not DUMMY_DATABASE:

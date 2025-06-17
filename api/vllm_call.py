@@ -16,7 +16,7 @@ from langchain_openai import ChatOpenAI
 
 def find_template(table_name):
     
-    if table_name=="baby_names_favorite_firstname":
+    if table_name == "baby_names_favorite_firstname":
         return few_shot_template_baby_names()
     elif table_name =="divorces_duration_of_marriage_citizenship_categories":
         return few_shot_template_divorces_duration_of_marriage_citizenship_categories()
@@ -46,18 +46,19 @@ def query_engineering_and_call(question, table_name, qry_id):
     model_path = os.environ["MODEL_PATH"]
 
     inference_server_url = os.environ["INFERENCE_SERVER_URL"]
+    deployed_llm_token = os.environ["DEPLOYED_LLM_TOKEN"]
 
     llm = ChatOpenAI(
         model=model_path + model_name,
-        openai_api_key="EMPTY",
+        openai_api_key=deployed_llm_token,
         openai_api_base=inference_server_url,
-        max_tokens=1500,
+        max_tokens = 1500,
         n = 1,
         stream = False,
         top_p = 1.0,
-        frequency_penalty=0.0,
-        presence_penalty=0.0,
-        temperature=0.0
+        frequency_penalty = 0.0,
+        presence_penalty = 0.0,
+        temperature = 0.0
     )
 
     # llm = ChatOpenAI(

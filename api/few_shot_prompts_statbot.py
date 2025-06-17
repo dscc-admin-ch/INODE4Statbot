@@ -4,8 +4,10 @@ import sys
 from langchain_core.prompts import ChatPromptTemplate
 from langchain import PromptTemplate, FewShotPromptTemplate
 from langchain.prompts.example_selector import SemanticSimilarityExampleSelector
-from langchain.vectorstores.chroma import Chroma
-from langchain.embeddings import HuggingFaceEmbeddings
+#from langchain.vectorstores.chroma import Chroma
+from langchain_community.vectorstores import Chroma
+#from langchain.embeddings import HuggingFaceEmbeddings
+from langchain_community.embeddings import HuggingFaceEmbeddings
 
 
 def few_shot_template_baby_names():
