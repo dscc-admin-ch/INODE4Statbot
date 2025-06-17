@@ -9,6 +9,7 @@ To run, first create a `.env` with the following variables:
 	MODEL_NAME=[ModelName]
 	MODEL_PATH="model_path"
 	INFERENCE_SERVER_URL=[Onyxia service address]
+	DEPLOYED_LLM_TOKEN=[HF or other API token]
 
 Along with the database parameters:
 
