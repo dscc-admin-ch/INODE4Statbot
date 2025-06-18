@@ -16,8 +16,10 @@ jobs:
         include:
           - image: dsccadminch/statbot-ui
             target: statbot-ui
+            folder: ui
           - image: dsccadminch/statbot-api
             target: statbot-api
+            folder: api
     steps:
       -
         name: Checkout
@@ -48,7 +50,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: .
-          file: Dockerfile
+          file: ${{ matrix.folder }}/Dockerfile
           push: true
           target: ${{ matrix.target }}
           tags: ${{ steps.meta.outputs.tags }}
