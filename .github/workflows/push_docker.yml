@@ -48,6 +48,6 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: ${{ matrix.target }}/.
-          file: Dockerfile
+          file: ${{ matrix.target }}/Dockerfile
           push: true
           tags: ${{ steps.meta.outputs.tags }}
