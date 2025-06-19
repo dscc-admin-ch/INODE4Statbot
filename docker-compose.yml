@@ -1,0 +1,32 @@
+services:
+    api:
+        build:
+            context: ./api
+            dockerfile: dockerfile
+        image:
+            statbot-api
+        environment:
+            - MODEL_NAME=${MODEL_NAME}
+            - MODEL_PATH=${MODEL_PATH}
+            - INFERENCE_SERVER_URL=${INFERENCE_SERVER_URL}
+            - DB_HOST=${DB_HOST}
+            - DB_PORT=${DB_PORT}
+            - DB_SCHEMA=${DB_SCHEMA}
+            - DB_PASS=${DB_PASS}
+            - DB_USERNAME=${DB_USERNAME}
+            - DB_DATABASE=${DB_DATABASE}
+        volumes:
+            - ./userdata:/app/userdata:consistent
+    ui:
+        build:
+            context: ./ui
+            dockerfile: dockerfile
+            args:
+                REACT_APP_ADMIN_MAIL: ${ADMIN_MAIL}
+        image:
+            statbot-ui
+        ports:
+            - 2000:2000
+        depends_on:
+            - api
+        

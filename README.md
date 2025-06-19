@@ -1,25 +1,64 @@
+# Statbot UI
 
-# INODE4Statbot
+This package contains the front- and back-end code for the Statbot UI.
 
-This repo contains the main modules of project INODE4Statbot, i.e., LLM webservice, the intent network and the UI.
+## Running the Server
 
-## Table of Contents
+To run, first create a `.env` with the following variables:
 
-## Introduction
+	MODEL_NAME=[ModelName]
+	MODEL_PATH="model_path"
+	INFERENCE_SERVER_URL=[Onyxia service address]
+	DEPLOYED_LLM_TOKEN=[HF or other API token]
 
-INODE4Statbot is a project designed to provide a comprehensive solution for interactive and intelligent database querying by natural through a combination of LLM webservice, an intent network, and an intuitive user interface.
+Along with the database parameters:
 
-## Features
+	DB_HOST=
+	DB_PORT=
+	DB_SCHEMA=
+	DB_PASS=
+	DB_USERNAME=
+	DB_DATABASE=
 
-- **LLM Webservice**: Provides webservice with support of multiple LLMs.
-- **Intent Network**: Handles the mapping of query intents to specific databases.
-- **User Interface**: A GUI for interacting with the system.
+Then run `docker compose up` to build and start the server.
 
-## Installation
+### Importing/Exporting User Data
 
-To install INODE4Statbot, follow these steps:
+Once the server is running, the logs, whitelist and user data will be stored in `./userdata`. To import existing data from a previous instance, place it in `./userdata` before startup. If no existing user data has been provided, create an `admin` account and password using the login screen after startup.
 
-## Usage
+### Managing Access
 
-To start using INODE4Statbot, run the following command:
+The user whitelist and password reset functions can be accessed in a browser via the administrator control panel at `http://[URL]/admin`. Alternatively, the databases in `./userdata` can be modified directly.
 
+
+## Statbot helm
+
+For now, on onyxia just clone this repo, adapt the `values.yaml` and run: 
+
+`helm dependency build ./statbot-helm/`
+
+`helm install statbot ./statbot-helm/`
+
+For now, ui is mapped to port 2000 (forced).
+The current `nginx.default.conf` is using this config:
+
+```
+server {
+        listen 2000 default_server;
+        listen [::]:2000 default_server;
+
+        root /usr/share/nginx/html;
+        index index.html;
+
+		location /
+		{
+			try_files $uri $uri/ /index.html =404;
+		}
+
+        location /api
+		{
+			proxy_pass http://api:5000/api;
+			proxy_read_timeout 3600;
+		}
+}
+```
