@@ -1,17 +1,17 @@
 api:
-  image: "jono711/statbot-api"
+  image: "dsccadminch/statbot-api"
   tag: "latest"
   env:
     MODEL_PATH: "" 
-    DB_HOST: "160.85.252.201"
-    DB_PORT: "18001"
-    DB_SCHEMA: "experiment"
-    DB_USERNAME: "read_only"
-    DB_PASS: "password"
-    DB_DATABASE: "postgres"
+    DB_HOST: ""
+    DB_PORT: ""
+    DB_SCHEMA: ""
+    DB_USERNAME: ""
+    DB_PASS: ""
+    DB_DATABASE: ""
 
 ui:
-  image: "jono711/statbot-ui"
+  image: "dsccadminch/statbot-ui"
   tag: "latest"
   env:
     ADMIN_MAIL: "admin@example.com"
