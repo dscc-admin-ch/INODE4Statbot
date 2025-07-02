@@ -26,8 +26,9 @@ ingress:
 
 vllm:
   global:
-  suspend: false # Allow scaling the app to 0
+    suspend: false # Allow scaling the app to 0
 
+  enabled: true
   nameOverride: ""
   fullnameOverride: "llm-serving"
   podAnnotations: {}
@@ -76,3 +77,7 @@ vllm:
     sessionToken: ""
 
   nodeSelector: {}
+
+deployedllm:
+  address: ""
+  accessToken: ""
