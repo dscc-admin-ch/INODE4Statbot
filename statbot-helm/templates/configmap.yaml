@@ -5,7 +5,11 @@ metadata:
 data:
   MODEL_NAME: "{{ .Values.vllm.llm.hfModelName }}"
   MODEL_PATH: "{{ .Values.api.env.MODEL_PATH }}"
+{{- if .Values.vllm.enabled }}
   INFERENCE_SERVER_URL: "https://{{ .Values.vllm.ingress.hostname }}/v1"
+{{- else }}
+  INFERENCE_SERVER_URL: "https://{{ .Values.deployedllm.address }}/v1"
+{{- end }}
   DB_HOST: "{{ .Values.api.env.DB_HOST }}"
   DB_PORT: "{{ .Values.api.env.DB_PORT }}"
   DB_SCHEMA: "{{ .Values.api.env.DB_SCHEMA }}"
