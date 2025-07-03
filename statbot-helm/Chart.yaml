@@ -2,8 +2,8 @@ apiVersion: v2
 name: statbot
 description: A Helm chart for deploying the Statbot API and UI
 type: application
-version: 0.0.6
-appVersion: 0.0.6
+version: 0.0.7
+appVersion: 0.0.7
 
 dependencies:
   - name: llm-serving

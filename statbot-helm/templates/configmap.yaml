@@ -3,11 +3,12 @@ kind: ConfigMap
 metadata:
   name: api-config
 data:
-  MODEL_NAME: "{{ .Values.vllm.llm.hfModelName }}"
   MODEL_PATH: "{{ .Values.api.env.MODEL_PATH }}"
 {{- if .Values.vllm.enabled }}
+  MODEL_NAME: "{{ .Values.vllm.llm.hfModelName }}"
   INFERENCE_SERVER_URL: "https://{{ .Values.vllm.ingress.hostname }}/v1"
 {{- else }}
+  MODEL_NAME: "{{ .Values.deployedllm.modelName }}"
   INFERENCE_SERVER_URL: "https://{{ .Values.deployedllm.address }}/v1"
 {{- end }}
   DB_HOST: "{{ .Values.api.env.DB_HOST }}"
