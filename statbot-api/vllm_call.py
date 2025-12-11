@@ -1,8 +1,19 @@
 import time
 import sys
 import os
-from sqlalchemyWrapper import *
-from few_shot_prompts_statbot import *
+from sqlalchemyWrapper import (
+    schema_db_postgres_statbot_zhaw
+)
+from few_shot_prompts_statbot import (
+    generate_sql_in_context_learning_similar_shots, 
+    few_shot_template_baby_names, 
+    few_shot_template_divorces_duration_of_marriage_citizenship_categories,
+    few_shot_template_stock_vehicles,
+    few_shot_template_divorces_duration_of_marriage_age_classes,
+    few_shot_template_marriage_citizenship,
+    few_shot_template_resident_population_birthplace_citizenship_type,
+    zero_shot_template
+)
 from langchain import LLMChain
 import tiktoken
 from langchain_core.messages import HumanMessage, SystemMessage
@@ -18,15 +29,15 @@ def find_template(table_name):
     
     if table_name == "baby_names_favorite_firstname":
         return few_shot_template_baby_names()
-    elif table_name =="divorces_duration_of_marriage_citizenship_categories":
+    elif table_name == "divorces_duration_of_marriage_citizenship_categories":
         return few_shot_template_divorces_duration_of_marriage_citizenship_categories()
-    elif table_name =="stock_vehicles":
+    elif table_name == "stock_vehicles":
         return few_shot_template_stock_vehicles()
-    elif table_name =="divorces_duration_of_marriage_age_classes":
+    elif table_name == "divorces_duration_of_marriage_age_classes":
         return few_shot_template_divorces_duration_of_marriage_age_classes()
     elif table_name == "marriage_citizenship":
         return few_shot_template_marriage_citizenship()
-    elif table_name =="resident_population_birthplace_citizenship_type":
+    elif table_name == "resident_population_birthplace_citizenship_type":
         return few_shot_template_resident_population_birthplace_citizenship_type()
     else:
         return zero_shot_template()
@@ -52,13 +63,13 @@ def query_engineering_and_call(question, table_name, qry_id):
         model=model_path + model_name,
         openai_api_key=deployed_llm_token,
         openai_api_base=inference_server_url,
-        max_tokens = 1500,
-        n = 1,
-        stream = False,
-        top_p = 1.0,
-        frequency_penalty = 0.0,
-        presence_penalty = 0.0,
-        temperature = 0.0
+        max_tokens=1500,
+        n=1,
+        stream=False,
+        top_p=1.0,
+        frequency_penalty=0.0,
+        presence_penalty=0.0,
+        temperature=0.0
     )
 
     # llm = ChatOpenAI(
@@ -103,13 +114,14 @@ def query_engineering_and_call(question, table_name, qry_id):
             sys.stderr.write(str(e))
             time.sleep(3)
             pass
-    ## time ###
+    
+    # time 
     toc = time.perf_counter()
 
     num_tokens = sql.response_metadata['token_usage']['total_tokens']
     sql_response = sql.content
     
-    process_time=toc-tic
+    process_time = toc-tic
     print(f"Process Time= {process_time:0.4f} second")
     r = {"message": {
         "db_id": table_name,
