@@ -18,6 +18,8 @@ jobs:
             target: statbot-ui
           - image: dsccadminch/statbot-api
             target: statbot-api
+          - image: dsccadminch/statbot-db
+            target: statbot-db
     steps:
       -
         name: Checkout

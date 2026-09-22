@@ -1,0 +1,16 @@
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: postgresql-cnpg-346837
+
+spec:
+  enableSuperuserAccess: true
+  instances: 1
+
+  storage:
+    size: 20Gi
+
+  bootstrap:
+    initdb:
+      database: postgres
+      owner: postgres
