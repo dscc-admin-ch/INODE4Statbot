@@ -349,7 +349,7 @@ def few_shot_template_divorces_duration_of_marriage_age_classes():
 def zero_shot_template():
     prompt = '''
     This is a task converting text into SQL statement.
-    We will first given the dataset schema and then ask a question in text. 
+    We will first given the dataset schema and then ask a question in text.
     Translate the question into the language of the database schema when the languages of the question and the database schema differ.
     You are asked to generate SQL statement.
     For counting use sum(amount) every time.
@@ -367,7 +367,8 @@ def zero_shot_template():
                 "system",
                 prompt,
             ),
-            (   "human", 
+            (   
+                "human",
                 question
             ),
         ]
@@ -381,14 +382,14 @@ def few_shot_template_examples(example_prompt, example_selector):
 
     few_shot_prompt = FewShotPromptTemplate(
         # These are the examples we want to insert into the prompt.
-        example_selector = example_selector,
-        example_prompt = example_prompt,
+        example_selector=example_selector,
+        example_prompt=example_prompt,
         # The prefix is some text that goes before the examples in the prompt.
         # Usually, this consists of intructions.
-        prefix= prefix,
+        prefix=prefix,
         # The suffix is some text that goes after the examples in the prompt.
         # Usually, this is where the user input will go
-        suffix= "### Question\n{input}\n### SQL query\n",
+        suffix="### Question\n{input}\n### SQL query\n",
         # The input variables are the variables that the overall prompt expects.
         input_variables=["input", "table_info"],
         example_separator="\n\n",
@@ -397,11 +398,11 @@ def few_shot_template_examples(example_prompt, example_selector):
 
 
 
-def generate_sql_in_context_learning_similar_shots(question, table_name, n_shots = 3, file_path = "data/query_questions_db.csv"):
+def generate_sql_in_context_learning_similar_shots(question, table_name, n_shots=3, file_path="data/query_questions_db.csv"):
     # find the n_shots closest questions from the query_questions_db and the table
 
     with open(file_path) as f:
-        origin_of_shots = pd.read_csv(f, delimiter= ',')
+        origin_of_shots = pd.read_csv(f, delimiter=',')
 
     examples = origin_of_shots.loc[origin_of_shots['db_id']==table_name]
     examples = examples.reset_index()
@@ -409,10 +410,10 @@ def generate_sql_in_context_learning_similar_shots(question, table_name, n_shots
     meta_data = []
 
     for j in range(len(examples)):
-        ex_question = examples.loc[j,'question'].replace("\n","").strip()
-        ex_query = examples.loc[j,'query']
-        few_shot_examples.append({"question":ex_question})
-        meta_data.append({"question":ex_question,"query":ex_query})
+        ex_question = examples.loc[j, 'question'].replace("\n", "").strip()
+        ex_query = examples.loc[j, 'query']
+        few_shot_examples.append({"question": ex_question})
+        meta_data.append({"question": ex_question, "query": ex_query})
 
     to_vectorize = [" ".join(example.values()) for example in few_shot_examples]
 
@@ -420,20 +421,20 @@ def generate_sql_in_context_learning_similar_shots(question, table_name, n_shots
 
     vectorstore = None
     if vectorstore is not None:
-        ########CLEAR THE VECTORSTORE
+        # CLEAR THE VECTORSTORE
         vectorstore.delete_collection()
 
     vectorstore = Chroma.from_texts(to_vectorize, embeddings, metadatas=meta_data)
 
     # Lower score is more similar
-    answers = vectorstore.similarity_search_with_score(query = question, k = n_shots)
+    answers = vectorstore.similarity_search_with_score(query=question, k=n_shots)
 
     examples_selector = SemanticSimilarityExampleSelector(
         vectorstore=vectorstore,
-        k = n_shots,
+        k=n_shots,
     )
     examples_prompt = PromptTemplate(
-        input_variables=["question","query"],
+        input_variables=["question", "query"],
         template="### Question\n{question}\n### SQL query\n{query}",
     )
     prompt_template = few_shot_template_examples(examples_prompt, examples_selector)

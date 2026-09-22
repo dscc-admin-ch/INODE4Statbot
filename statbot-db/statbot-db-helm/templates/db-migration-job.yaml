@@ -1,0 +1,65 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ .Values.postgresql.clusterName }}-migration
+  annotations:
+    "helm.sh/hook": post-install,post-upgrade
+    "helm.sh/hook-weight": "10"
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+
+spec:
+  backoffLimit: 3
+
+  template:
+    metadata:
+      labels:
+        app: statbot-db-migration
+
+    spec:
+      restartPolicy: Never
+
+      containers:
+        - name: database-migration
+
+          image:
+            "{{ .Values.database.image.repository }}:{{ .Values.database.image.tag }}"
+
+          env:
+            - name: DB_HOST
+              value: "{{ .Values.postgresql.clusterName }}-rw"
+
+            - name: DB_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: postgresql-credentials
+                  key: username
+
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgresql-credentials
+                  key: password
+                  
+            - name: DB_PORT
+              value: "{{ .Values.env.DB_PORT }}"
+                  
+            - name: DB_SCHEMA
+              value: "{{ .Values.env.DB_SCHEMA }}"
+                  
+            - name: DB_DATABASE
+              value: "{{ .Values.env.DB_DATABASE }}"
+
+            - name: S3_ENDPOINT
+              value: "{{ .Values.s3.endpoint }}"
+
+            - name: S3_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: s3-credentials
+                  key: access-key
+
+            - name: S3_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: s3-credentials
+                  key: secret-key
