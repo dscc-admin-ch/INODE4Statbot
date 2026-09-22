@@ -1,12 +1,26 @@
 postgresql:
-  clusterName: postgresql-cnpg-346837
+  clusterName: postgresql-cnpg-postgres
   instances: 1
   storageSize: 20Gi
 
 database:
   image:
-    repository: registry.example.com/statbot-db
+    repository: dsccadminch/statbot-db
     tag: "1.0.0"
 
 s3:
-  endpoint: "https://s3.example.com"
+  enabled: true # Set to true to use S3
+  s3ModelPath: ""
+  accessKeyId: ""
+  endpoint: ""
+  defaultRegion: ""
+  secretAccessKey: ""
+  sessionToken: ""
+
+env:
+  DB_HOST: ""
+  DB_PORT: ""
+  DB_SCHEMA: ""
+  DB_USERNAME: ""
+  DB_PASS: ""
+  DB_DATABASE: ""
