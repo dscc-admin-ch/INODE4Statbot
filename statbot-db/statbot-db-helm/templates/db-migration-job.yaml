@@ -25,20 +25,29 @@ spec:
             "{{ .Values.database.image.repository }}:{{ .Values.database.image.tag }}"
 
           env:
-            - name: PGHOST
+            - name: DB_HOST
               value: "{{ .Values.postgresql.clusterName }}-rw"
 
-            - name: PGUSER
+            - name: DB_USERNAME
               valueFrom:
                 secretKeyRef:
                   name: postgresql-credentials
                   key: username
 
-            - name: PGPASSWORD
+            - name: DB_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: postgresql-credentials
                   key: password
+                  
+            - name: DB_PORT
+              value: "{{ .Values.env.DB_PORT }}"
+                  
+            - name: DB_SCHEMA
+              value: "{{ .Values.env.DB_SCHEMA }}"
+                  
+            - name: DB_DATABASE
+              value: "{{ .Values.env.DB_DATABASE }}"
 
             - name: S3_ENDPOINT
               value: "{{ .Values.s3.endpoint }}"

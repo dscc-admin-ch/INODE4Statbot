@@ -2,7 +2,7 @@ api:
   image: "dsccadminch/statbot-api"
   tag: "latest"
   env:
-    MODEL_PATH: "" 
+    MODEL_PATH: ""
     DB_HOST: ""
     DB_PORT: ""
     DB_SCHEMA: ""

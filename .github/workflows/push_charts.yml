@@ -7,20 +7,30 @@ on:
     - hotfix/**
 
 jobs:
-  build:
-
+  publish:
     runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        include:
+          - chart_name: statbot
+            source_dir: statbot-helm/
+            target_dir: charts/statbot
+          - chart_name: statbot-db
+            source_dir: statbot-db/statbot-db-helm/
+            target_dir: charts/statbot-db
 
     steps:
     - name: Checkout
       uses: actions/checkout@v3
-    - name: Pushes to another repository
+
+    - name: Push ${{ matrix.chart_name }} to Helm repository
       uses: cpina/github-action-push-to-another-repository@main
       env:
         SSH_DEPLOY_KEY: ${{ secrets.SSH_DEPLOY_KEY_HELM }}
       with:
-        source-directory: statbot-helm/
+        source-directory: ${{ matrix.source_dir }}
         destination-github-username: 'dscc-admin-ch'
         destination-repository-name: 'helm-charts'
         target-branch: master
-        target-directory: charts/statbot
+        target-directory: ${{ matrix.target_dir }}
