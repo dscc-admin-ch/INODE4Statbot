@@ -1,0 +1,6 @@
+apiVersion: v2
+name: statbot-db
+description: A Helm chart to deploy a CloudNativePG cluster and run a database migration job.
+type: application
+version: 0.0.1
+appVersion: "0.0.1"
