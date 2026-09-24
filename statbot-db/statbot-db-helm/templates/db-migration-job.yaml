@@ -8,7 +8,7 @@ metadata:
     "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
 
 spec:
-  backoffLimit: 3
+  backoffLimit: 0
 
   template:
     metadata:
@@ -34,7 +34,7 @@ spec:
                   name: postgresql-credentials
                   key: username
 
-            - name: DB_PASSWORD
+            - name: DB_PASS
               valueFrom:
                 secretKeyRef:
                   name: postgresql-credentials
